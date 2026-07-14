@@ -1,0 +1,37 @@
+# fly.toml app configuration file generated for Hiring Signal module
+#
+# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
+#
+# Deploy:
+#   fly launch --copy-config --no-deploy   # first time, or: fly apps create hiring-signal-sop
+#   fly secrets set SUPABASE_URL=... SUPABASE_SERVICE_KEY=... SERPAPI_KEY=... OPENROUTER_API_KEY=...
+#   fly deploy
+
+app = 'hiring-signal-sop'
+primary_region = 'iad'
+
+[build]
+
+[env]
+  MAX_JOBS_PER_RUN = '5'
+  OPENROUTER_MODEL = 'openai/gpt-oss-20b:free'
+
+[http_service]
+  internal_port = 8000
+  force_https = true
+  auto_stop_machines = 'stop'
+  auto_start_machines = true
+  min_machines_running = 0
+  processes = ['app']
+
+  [[http_service.checks]]
+    interval = '30s'
+    timeout = '5s'
+    grace_period = '20s'
+    method = 'GET'
+    path = '/health'
+
+[[vm]]
+  memory = '512mb'
+  cpu_kind = 'shared'
+  cpus = 1

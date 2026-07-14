@@ -9,7 +9,7 @@ Built for the audition task. Scraper #6: hiring signal scraper with job
 description included.
 
 **Full project documentation:** [docs/PROJECT.md](docs/PROJECT.md)  
-**Free deploy (Render / ngrok):** [docs/DEPLOY_FREE.md](docs/DEPLOY_FREE.md)
+**Free deploy options:** [docs/DEPLOY_FREE.md](docs/DEPLOY_FREE.md) · **Fly.io:** [docs/DEPLOY_FLYIO.md](docs/DEPLOY_FLYIO.md)
 
 ---
 

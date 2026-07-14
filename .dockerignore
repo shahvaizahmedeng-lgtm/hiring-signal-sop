@@ -1,0 +1,9 @@
+.dockerignore
+.env
+.venv
+__pycache__
+*.pyc
+module_state.json
+local_sourcing_companies.json
+.git
+.cursor
