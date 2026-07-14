@@ -4,3 +4,4 @@ __pycache__/
 module_state.json
 local_sourcing_companies.json
 local_sourcing_companies.json.tmp
+.tunnel-logs/

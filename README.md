@@ -8,7 +8,8 @@ pushes normalised company rows directly into `sourcing_companies`.
 Built for the audition task. Scraper #6: hiring signal scraper with job
 description included.
 
-**Full project documentation:** [docs/PROJECT.md](docs/PROJECT.md)
+**Full project documentation:** [docs/PROJECT.md](docs/PROJECT.md)  
+**Deploy (frontend + backend together):** [docs/DEPLOY.md](docs/DEPLOY.md)
 
 ---
 
