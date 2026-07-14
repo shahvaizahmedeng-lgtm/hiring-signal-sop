@@ -1,0 +1,33 @@
+# Free deploy on Render.com
+# Blueprint: https://render.com/docs/blueprint-spec
+#
+# After connect GitHub → New → Blueprint → select this repo.
+# Then set env vars in the dashboard (never commit .env).
+
+services:
+  - type: web
+    name: hiring-signal-module
+    runtime: python
+    plan: free
+    region: oregon
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn main:app --app-dir src --host 0.0.0.0 --port $PORT
+    healthCheckPath: /health
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.12.0"
+      - key: MAX_JOBS_PER_RUN
+        value: "5"
+      - key: OPENROUTER_MODEL
+        value: openai/gpt-oss-20b:free
+      # Set these in the Render dashboard (secret):
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_SERVICE_KEY
+        sync: false
+      - key: SERPAPI_KEY
+        sync: false
+      - key: OPENROUTER_API_KEY
+        sync: false
+      - key: JINA_API_KEY
+        sync: false

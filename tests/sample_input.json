@@ -1,0 +1,39 @@
+{
+  "default_inputs": {
+    "sourcing_config_id": "2asifsouahfaiusf-fsafnaa-asfasf",
+    "client_id": "ad19f786-d43b-4e4d-ad8a-2fb7e8929824",
+    "icp_config": {
+      "market": {
+        "id": "926d1430-ef32-46e8-8b3b-4a234a79d824",
+        "name": "PE Portfolio Companies",
+        "market": "Private Equity, Venture Capital and Private Equity Principals",
+        "market_tag": ""
+      },
+      "segment": {
+        "id": "1b5b7e88-1dc3-48f1-a534-75df62b8481f",
+        "icp_config_id": "926d1430-ef32-46e8-8b3b-4a234a79d824",
+        "company_sizes": ["51-200", "201-500", "501-1000", "1001-5000", "5001-10,000"],
+        "geos": ["United States"],
+        "fixed_signals": ["hiring for Anesthesia and CRNA"],
+        "custom_signals": [],
+        "free_text_qualifier": "Look for healthcare providers which have got open roles for Anesthesia and CRNA"
+      },
+      "persona": {
+        "id": "05138d40-4888-4aa2-add7-82b4fe6aab5e",
+        "icp_config_id": "926d1430-ef32-46e8-8b3b-4a234a79d824",
+        "segment_id": "1b5b7e88-1dc3-48f1-a534-75df62b8481f",
+        "seniority": {
+          "CXO": "include",
+          "Director": "include",
+          "Vice President": "include",
+          "Owner / Partner": "include",
+          "Experienced Manager": "include"
+        },
+        "job_titles": [
+          "Operating Partner, VP of Portfolio Operations, Director of Portfolio Operations, Head of Human Capital, VP Human Capital, Director of Human Capital, VP of People, Head of People Operations, Value Creation Partner, Director of Value Creation, Portfolio Operations Manager, HR Operating Partner, Managing Director, Principal, Partner, Founder, CEO"
+        ]
+      }
+    }
+  },
+  "module_inputs": {}
+}

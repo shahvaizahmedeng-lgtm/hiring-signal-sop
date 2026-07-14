@@ -1,0 +1,1411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Hiring Signal — Sourcing Module</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Syne:wght@600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --ink: #061012;
+      --slate: #1a3034;
+      --mist: #e8f0f1;
+      --fog: #c5d4d7;
+      --teal: #0a6b6f;
+      --teal-deep: #07494c;
+      --teal-soft: #9fd5d7;
+      --signal: #14b8a6;
+      --warn: #b45309;
+      --fail: #b42318;
+      --ok: #047857;
+      --surface: rgba(255, 255, 255, 0.88);
+      --surface-solid: #ffffff;
+      --border: rgba(6, 16, 18, 0.14);
+      --radius: 14px;
+      --font-display: "Syne", system-ui, sans-serif;
+      --font-body: "DM Sans", system-ui, sans-serif;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: var(--font-body);
+      color: var(--ink);
+      min-height: 100vh;
+      background:
+        radial-gradient(ellipse 90% 60% at 10% -10%, rgba(45, 212, 191, 0.18), transparent 55%),
+        radial-gradient(ellipse 70% 50% at 100% 0%, rgba(13, 115, 119, 0.14), transparent 50%),
+        linear-gradient(165deg, #f4fafa 0%, #e6eff0 42%, #dce8ea 100%);
+      background-attachment: fixed;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(12, 26, 28, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(12, 26, 28, 0.03) 1px, transparent 1px);
+      background-size: 48px 48px;
+      pointer-events: none;
+      z-index: 0;
+      mask-image: linear-gradient(180deg, #000 0%, transparent 70%);
+    }
+
+    .wrap {
+      position: relative;
+      z-index: 1;
+      width: min(1120px, calc(100% - 2rem));
+      margin: 0 auto;
+      padding: 2.5rem 0 4rem;
+    }
+
+    /* —— Hero —— */
+    .hero {
+      padding: 0.75rem 0 1.75rem;
+      animation: rise 0.7s ease-out both;
+    }
+
+    @keyframes rise {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: none; }
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+    }
+
+    .topbar a {
+      color: var(--ink);
+      text-decoration: none;
+      font-size: 0.875rem;
+      font-weight: 600;
+      opacity: 0.7;
+      transition: opacity 0.2s;
+    }
+    .topbar a:hover { opacity: 1; }
+
+    .status-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      align-items: center;
+    }
+
+    .health {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      padding: 0.4rem 0.8rem;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: #fff;
+      color: var(--ink);
+    }
+    .health .dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: #94a3a8;
+      transition: background 0.3s, box-shadow 0.3s;
+    }
+    .health.ok .dot {
+      background: var(--ok);
+      box-shadow: 0 0 0 3px rgba(6, 122, 70, 0.2);
+    }
+    .health.bad .dot {
+      background: var(--fail);
+      box-shadow: 0 0 0 3px rgba(180, 35, 24, 0.2);
+    }
+
+    .brand {
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: clamp(2.75rem, 7vw, 4.5rem);
+      line-height: 0.95;
+      letter-spacing: -0.03em;
+      color: var(--ink);
+      max-width: 14ch;
+      -webkit-text-fill-color: var(--ink);
+    }
+    .brand span {
+      display: block;
+      color: var(--teal);
+      -webkit-text-fill-color: var(--teal);
+    }
+
+    .pitch {
+      margin-top: 1.25rem;
+      font-size: clamp(1.05rem, 2vw, 1.2rem);
+      line-height: 1.55;
+      color: var(--slate);
+      max-width: 40rem;
+      opacity: 1;
+      font-weight: 500;
+    }
+    .pitch code {
+      font-size: 0.92em;
+      background: rgba(10, 107, 111, 0.12);
+      padding: 0.1em 0.35em;
+      border-radius: 4px;
+      color: var(--teal-deep);
+    }
+
+    .pipeline {
+      margin-top: 1.5rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem 0.35rem;
+      align-items: center;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--teal-deep);
+    }
+    .pipeline em {
+      font-style: normal;
+      padding: 0.3rem 0.65rem;
+      background: rgba(13, 115, 119, 0.1);
+      border-radius: 6px;
+    }
+    .pipeline .arrow { opacity: 0.4; margin: 0 0.1rem; }
+
+    /* —— Sections —— */
+    section {
+      margin-top: 2rem;
+      animation: rise 0.6s ease-out both;
+      animation-delay: 0.12s;
+    }
+
+    .section-head {
+      margin-bottom: 1rem;
+    }
+    .section-head h2 {
+      font-family: var(--font-display);
+      font-size: 1.35rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+    .section-head p {
+      margin-top: 0.35rem;
+      font-size: 0.95rem;
+      color: var(--slate);
+      opacity: 0.8;
+      max-width: 40rem;
+    }
+
+    .panel {
+      background: var(--surface);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.25rem 1.35rem;
+      box-shadow: 0 12px 40px rgba(12, 26, 28, 0.06);
+    }
+
+    .presets {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+    }
+    .chip {
+      font-family: var(--font-body);
+      font-size: 0.8rem;
+      font-weight: 600;
+      padding: 0.4rem 0.85rem;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--slate);
+      cursor: pointer;
+      transition: background 0.2s, border-color 0.2s, color 0.2s;
+    }
+    .chip:hover { border-color: var(--teal); color: var(--teal-deep); }
+    .chip.active {
+      background: var(--teal);
+      border-color: var(--teal);
+      color: #fff;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 1rem;
+    }
+    @media (max-width: 860px) {
+      .grid-2 { grid-template-columns: 1fr; }
+    }
+
+    label.field-label {
+      display: block;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--slate);
+      opacity: 0.7;
+      margin-bottom: 0.45rem;
+    }
+
+    textarea#payload {
+      width: 100%;
+      min-height: 320px;
+      resize: vertical;
+      font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+      font-size: 0.78rem;
+      line-height: 1.45;
+      padding: 0.85rem;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: var(--surface-solid);
+      color: var(--ink);
+    }
+    textarea#payload:focus {
+      outline: 2px solid rgba(13, 115, 119, 0.35);
+      outline-offset: 1px;
+    }
+
+    .controls {
+      display: flex;
+      flex-direction: column;
+      gap: 1.15rem;
+    }
+
+    .control-row {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+
+    .toggle {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+    .toggle span.desc {
+      font-size: 0.85rem;
+      color: var(--slate);
+      opacity: 0.85;
+      line-height: 1.35;
+    }
+
+    .switch {
+      position: relative;
+      width: 44px;
+      height: 26px;
+      flex-shrink: 0;
+    }
+    .switch input { opacity: 0; width: 0; height: 0; }
+    .switch .slider {
+      position: absolute;
+      inset: 0;
+      background: var(--fog);
+      border-radius: 999px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .switch .slider::before {
+      content: "";
+      position: absolute;
+      width: 20px; height: 20px;
+      left: 3px; top: 3px;
+      background: #fff;
+      border-radius: 50%;
+      transition: transform 0.2s;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+    }
+    .switch input:checked + .slider { background: var(--teal); }
+    .switch input:checked + .slider::before { transform: translateX(18px); }
+
+    input[type="range"] {
+      width: 100%;
+      accent-color: var(--teal);
+    }
+    .range-val {
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+      color: var(--teal-deep);
+    }
+
+    input[type="text"]#queries {
+      width: 100%;
+      padding: 0.55rem 0.75rem;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--surface-solid);
+      font-family: inherit;
+      font-size: 0.9rem;
+    }
+    input[type="text"]#queries:focus {
+      outline: 2px solid rgba(13, 115, 119, 0.35);
+      outline-offset: 1px;
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+      margin-top: 0.25rem;
+    }
+
+    button.btn {
+      font-family: inherit;
+      font-size: 0.9rem;
+      font-weight: 700;
+      padding: 0.7rem 1.15rem;
+      border-radius: 10px;
+      border: none;
+      cursor: pointer;
+      transition: transform 0.15s, box-shadow 0.2s, background 0.2s, opacity 0.2s;
+    }
+    button.btn:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+      transform: none !important;
+    }
+    button.btn-primary {
+      background: var(--teal);
+      color: #fff;
+      box-shadow: 0 4px 16px rgba(13, 115, 119, 0.3);
+    }
+    button.btn-primary:hover:not(:disabled) {
+      background: var(--teal-deep);
+      transform: translateY(-1px);
+    }
+    button.btn-secondary {
+      background: var(--ink);
+      color: #fff;
+    }
+    button.btn-secondary:hover:not(:disabled) {
+      background: var(--slate);
+      transform: translateY(-1px);
+    }
+    button.btn-ghost {
+      background: transparent;
+      color: var(--slate);
+      border: 1px solid var(--border);
+    }
+    button.btn-ghost:hover:not(:disabled) {
+      border-color: var(--teal);
+      color: var(--teal-deep);
+    }
+
+    button.btn.loading {
+      animation: pulse 1.2s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(13, 115, 119, 0.4); }
+      50% { box-shadow: 0 0 0 8px rgba(13, 115, 119, 0); }
+    }
+
+    /* —— Results —— */
+    #results-section { animation-delay: 0.2s; }
+
+    .badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.45rem;
+      margin-bottom: 1rem;
+    }
+    .badge {
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+      padding: 0.35rem 0.7rem;
+      border-radius: 6px;
+      background: rgba(13, 115, 119, 0.12);
+      color: var(--teal-deep);
+    }
+    .badge.mode { background: rgba(12, 26, 28, 0.08); color: var(--slate); }
+    .badge.dry { background: rgba(196, 92, 38, 0.12); color: var(--warn); }
+    .badge.ok { background: rgba(4, 120, 87, 0.12); color: var(--ok); }
+    .badge.err { background: rgba(180, 35, 24, 0.12); color: var(--fail); }
+    .badge.warn { background: rgba(180, 83, 9, 0.14); color: var(--warn); }
+    .badge.partial { background: rgba(180, 83, 9, 0.14); color: var(--warn); }
+
+    .banner {
+      padding: 0.85rem 1rem;
+      border-radius: 10px;
+      margin-bottom: 1rem;
+      font-size: 0.88rem;
+      line-height: 1.45;
+      border: 1px solid var(--border);
+      background: rgba(10, 107, 111, 0.08);
+      color: var(--teal-deep);
+    }
+    .banner.warn {
+      background: rgba(180, 83, 9, 0.1);
+      border-color: rgba(180, 83, 9, 0.28);
+      color: #7c3d08;
+    }
+    .banner.err {
+      background: rgba(180, 35, 24, 0.08);
+      border-color: rgba(180, 35, 24, 0.25);
+      color: var(--fail);
+    }
+
+    .counters {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+      gap: 0.65rem;
+      margin-bottom: 1.25rem;
+    }
+    .counter {
+      padding: 0.75rem 0.85rem;
+      border-radius: 10px;
+      background: var(--surface-solid);
+      border: 1px solid var(--border);
+      animation: rise 0.4s ease-out both;
+    }
+    .counter .n {
+      font-family: var(--font-display);
+      font-size: 1.65rem;
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+      line-height: 1;
+      color: var(--ink);
+    }
+    .counter .k {
+      margin-top: 0.35rem;
+      font-size: 0.68rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--slate);
+      opacity: 0.7;
+    }
+
+    .empty {
+      padding: 2rem 1rem;
+      text-align: center;
+      color: var(--slate);
+      opacity: 0.7;
+      font-size: 0.95rem;
+    }
+
+    .error-box {
+      padding: 1rem;
+      border-radius: 10px;
+      background: rgba(180, 35, 24, 0.08);
+      border: 1px solid rgba(180, 35, 24, 0.25);
+      color: var(--fail);
+      font-size: 0.9rem;
+      white-space: pre-wrap;
+      margin-bottom: 1rem;
+    }
+
+    .company {
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      background: #fff;
+      margin-bottom: 0.85rem;
+      overflow: hidden;
+      transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s;
+      animation: rise 0.45s ease-out both;
+    }
+    .company:hover {
+      border-color: rgba(10, 107, 111, 0.4);
+      box-shadow: 0 10px 28px rgba(6, 16, 18, 0.08);
+      transform: translateY(-1px);
+    }
+
+    .company summary {
+      list-style: none;
+      cursor: pointer;
+      padding: 1.1rem 1.2rem;
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 0.75rem 1rem;
+      align-items: start;
+    }
+    .company summary::-webkit-details-marker { display: none; }
+
+    .outcome-pill {
+      font-size: 0.65rem;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: 0.35rem 0.55rem;
+      border-radius: 6px;
+      white-space: nowrap;
+      margin-top: 0.15rem;
+    }
+    .outcome-pill.inserted, .outcome-pill.would_insert {
+      background: rgba(4, 120, 87, 0.12);
+      color: var(--ok);
+    }
+    .outcome-pill.duplicate {
+      background: rgba(180, 83, 9, 0.12);
+      color: var(--warn);
+    }
+    .outcome-pill.skipped {
+      background: rgba(12, 26, 28, 0.08);
+      color: var(--slate);
+    }
+
+    .company .name {
+      font-weight: 800;
+      font-size: 1.08rem;
+      letter-spacing: -0.01em;
+    }
+    .company .meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.35rem 0.75rem;
+      margin-top: 0.4rem;
+      font-size: 0.8rem;
+      color: var(--slate);
+    }
+    .company .meta code {
+      font-family: ui-monospace, Menlo, monospace;
+      font-size: 0.75rem;
+      background: rgba(10, 107, 111, 0.1);
+      padding: 0.12rem 0.45rem;
+      border-radius: 4px;
+      color: var(--teal-deep);
+      font-weight: 600;
+    }
+    .company .conf-wrap {
+      text-align: right;
+    }
+    .company .conf {
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-variant-numeric: tabular-nums;
+      color: var(--teal-deep);
+      font-size: 1.35rem;
+      line-height: 1;
+      white-space: nowrap;
+    }
+    .company .conf-label {
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: var(--slate);
+      opacity: 0.65;
+      margin-top: 0.25rem;
+    }
+    .conf-bar {
+      margin-top: 0.45rem;
+      height: 4px;
+      width: 72px;
+      margin-left: auto;
+      background: rgba(12, 26, 28, 0.08);
+      border-radius: 99px;
+      overflow: hidden;
+    }
+    .conf-bar > i {
+      display: block;
+      height: 100%;
+      background: linear-gradient(90deg, var(--teal), var(--signal));
+      border-radius: 99px;
+    }
+
+    .company .body {
+      padding: 0 1.2rem 1.2rem;
+      border-top: 1px solid var(--border);
+      padding-top: 1rem;
+    }
+    .company .reason {
+      font-size: 0.95rem;
+      margin-bottom: 0.85rem;
+      color: var(--slate);
+      line-height: 1.45;
+    }
+    .company .jd-label {
+      font-size: 0.68rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--teal-deep);
+      margin-bottom: 0.4rem;
+    }
+    .company .jd {
+      font-size: 0.84rem;
+      line-height: 1.55;
+      max-height: 280px;
+      overflow: auto;
+      white-space: pre-wrap;
+      background: linear-gradient(180deg, #f3f8f8, #eef5f5);
+      border: 1px solid rgba(10, 107, 111, 0.12);
+      border-radius: 10px;
+      padding: 0.9rem 1rem;
+      color: var(--ink);
+    }
+
+    .tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.35rem;
+      margin: 1rem 0 1.1rem;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 0.55rem;
+    }
+    .tab {
+      font-family: inherit;
+      font-size: 0.8rem;
+      font-weight: 700;
+      padding: 0.45rem 0.85rem;
+      border-radius: 8px;
+      border: 1px solid transparent;
+      background: transparent;
+      color: var(--slate);
+      cursor: pointer;
+    }
+    .tab:hover { color: var(--ink); }
+    .tab.active {
+      background: rgba(10, 107, 111, 0.1);
+      color: var(--teal-deep);
+      border-color: rgba(10, 107, 111, 0.2);
+    }
+    .tab-panel[hidden] { display: none !important; }
+
+    .funnel {
+      display: grid;
+      gap: 0.45rem;
+      margin-bottom: 0.5rem;
+    }
+    .funnel-row {
+      display: grid;
+      grid-template-columns: 7.5rem 1fr 2.5rem;
+      gap: 0.65rem;
+      align-items: center;
+      font-size: 0.82rem;
+    }
+    .funnel-row .label {
+      font-weight: 700;
+      color: var(--slate);
+    }
+    .funnel-row .track {
+      height: 10px;
+      background: rgba(12, 26, 28, 0.06);
+      border-radius: 99px;
+      overflow: hidden;
+    }
+    .funnel-row .track > i {
+      display: block;
+      height: 100%;
+      border-radius: 99px;
+      background: linear-gradient(90deg, var(--teal-deep), var(--signal));
+      transition: width 0.6s ease;
+    }
+    .funnel-row .n {
+      font-weight: 800;
+      font-variant-numeric: tabular-nums;
+      text-align: right;
+    }
+
+    .query-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      margin-bottom: 1rem;
+    }
+    .query-chips span {
+      font-size: 0.78rem;
+      font-weight: 600;
+      padding: 0.35rem 0.7rem;
+      border-radius: 999px;
+      background: rgba(10, 107, 111, 0.1);
+      color: var(--teal-deep);
+    }
+
+    .hero-stat {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 0.75rem;
+      margin-bottom: 1.15rem;
+    }
+    .hero-stat .hs {
+      padding: 1rem 1.1rem;
+      border-radius: 12px;
+      background: linear-gradient(145deg, #0a6b6f 0%, #07494c 100%);
+      color: #fff;
+      box-shadow: 0 10px 28px rgba(10, 107, 111, 0.25);
+    }
+    .hero-stat .hs.alt {
+      background: linear-gradient(145deg, #1a3034 0%, #061012 100%);
+      box-shadow: 0 10px 28px rgba(6, 16, 18, 0.18);
+    }
+    .hero-stat .hs .big {
+      font-family: var(--font-display);
+      font-size: 2rem;
+      font-weight: 800;
+      line-height: 1;
+      font-variant-numeric: tabular-nums;
+    }
+    .hero-stat .hs .sub {
+      margin-top: 0.4rem;
+      font-size: 0.75rem;
+      font-weight: 600;
+      opacity: 0.85;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .raw-json {
+      width: 100%;
+      min-height: 220px;
+      font-family: ui-monospace, Menlo, Consolas, monospace;
+      font-size: 0.72rem;
+      line-height: 1.4;
+      padding: 0.85rem;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: #0c1a1c;
+      color: #d7ecec;
+      resize: vertical;
+    }
+
+    .skipped {
+      margin-top: 0.25rem;
+    }
+    .skipped h3 {
+      font-size: 0.85rem;
+      font-weight: 700;
+      margin-bottom: 0.55rem;
+      letter-spacing: 0.02em;
+    }
+    .skip-row {
+      font-size: 0.82rem;
+      padding: 0.7rem 0.85rem;
+      border-radius: 10px;
+      background: #fff;
+      border: 1px solid var(--border);
+      margin-bottom: 0.45rem;
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 0.65rem;
+    }
+    .skip-row .stage {
+      font-weight: 800;
+      color: var(--warn);
+      text-transform: uppercase;
+      font-size: 0.68rem;
+      letter-spacing: 0.04em;
+      padding-top: 0.15rem;
+    }
+    .skip-row .reason { color: var(--slate); word-break: break-word; }
+    .skip-row .cname {
+      font-weight: 700;
+      color: var(--ink);
+      display: block;
+      margin-bottom: 0.2rem;
+    }
+
+    .dedupe-callout {
+      padding: 1rem 1.1rem;
+      border-radius: 12px;
+      border: 1px dashed rgba(180, 83, 9, 0.45);
+      background: rgba(180, 83, 9, 0.08);
+      color: #7c3d08;
+      font-size: 0.9rem;
+      line-height: 1.45;
+      margin-bottom: 1rem;
+    }
+    .dedupe-callout strong { color: #5c2d06; }
+
+    .loading-stage {
+      display: flex;
+      flex-direction: column;
+      gap: 0.55rem;
+      padding: 1.5rem 0.5rem;
+      align-items: stretch;
+      max-width: 420px;
+      margin: 0 auto;
+    }
+    .loading-stage .ls {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: var(--slate);
+      opacity: 0.45;
+    }
+    .loading-stage .ls.on {
+      opacity: 1;
+      color: var(--teal-deep);
+    }
+    .loading-stage .ls .pip {
+      width: 10px; height: 10px; border-radius: 50%;
+      background: currentColor;
+      animation: pulse 1.2s ease-in-out infinite;
+    }
+
+    .decl {
+      margin-top: 2.5rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--border);
+      font-size: 0.82rem;
+      color: var(--slate);
+      opacity: 0.75;
+      line-height: 1.5;
+    }
+    .decl strong { color: var(--ink); opacity: 1; font-weight: 600; }
+
+    .footer-note {
+      margin-top: 2rem;
+      text-align: center;
+      font-size: 0.78rem;
+      color: var(--slate);
+      opacity: 0.55;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header class="hero">
+      <div class="topbar">
+        <div class="status-row">
+          <div class="health" id="health" title="GET /health">
+            <span class="dot"></span>
+            <span class="label">Checking…</span>
+          </div>
+          <div class="health" id="store" title="Write backend">
+            <span class="dot"></span>
+            <span class="label">Store…</span>
+          </div>
+        </div>
+        <nav>
+          <a href="/docs" target="_blank" rel="noopener">API docs</a>
+          ·
+          <a href="/health" target="_blank" rel="noopener">/health</a>
+        </nav>
+      </div>
+      <h1 class="brand">Hiring<span>Signal</span></h1>
+      <p class="pitch">
+        Scraper&nbsp;#6 — Google Jobs with full job descriptions, LLM ICP qualification,
+        and direct push to <code>sourcing_companies</code>.
+      </p>
+      <div class="pipeline" aria-hidden="true">
+        <em>SerpAPI Jobs</em><span class="arrow">→</span>
+        <em>Full JD</em><span class="arrow">→</span>
+        <em>Qualify</em><span class="arrow">→</span>
+        <em>Drop-gate</em><span class="arrow">→</span>
+        <em>Insert</em>
+      </div>
+    </header>
+
+    <section id="console-section">
+      <div class="section-head">
+        <h2>Run console</h2>
+        <p>Same <code>default_inputs</code> + <code>module_inputs</code> POST as the SOP. Use Preview anytime; Live insert writes to Supabase when the table exists, otherwise a local JSON store so the demo still works.</p>
+      </div>
+
+      <div class="panel">
+        <div class="presets">
+          <button type="button" class="chip active" data-preset="healthcare" id="preset-healthcare">Healthcare-aligned</button>
+          <button type="button" class="chip" data-preset="sop" id="preset-sop">SOP sample</button>
+        </div>
+
+        <div class="grid-2">
+          <div>
+            <label class="field-label" for="payload">Request payload</label>
+            <textarea id="payload" spellcheck="false"></textarea>
+          </div>
+
+          <div class="controls">
+            <div class="control-row">
+              <label class="field-label">Dry run</label>
+              <div class="toggle">
+                <span class="desc">Full pipeline, no DB write. Rows appear under would_insert.</span>
+                <label class="switch">
+                  <input type="checkbox" id="dry_run" checked />
+                  <span class="slider"></span>
+                </label>
+              </div>
+            </div>
+
+            <div class="control-row">
+              <label class="field-label" for="min_confidence">
+                Min confidence <span class="range-val" id="conf_label">60</span>
+              </label>
+              <input type="range" id="min_confidence" min="0" max="100" value="60" />
+            </div>
+
+            <div class="control-row">
+              <label class="field-label" for="queries">Search queries override</label>
+              <input type="text" id="queries" placeholder="Leave empty to derive from fixed_signals × geos" />
+            </div>
+
+            <div class="actions">
+              <button type="button" class="btn btn-primary" id="btn-preview">Preview run</button>
+              <button type="button" class="btn btn-secondary" id="btn-live">Live insert</button>
+              <button type="button" class="btn btn-ghost" id="btn-rerun" disabled>Re-run</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="results-section">
+      <div class="section-head">
+        <h2>Results</h2>
+        <p>Hero stats, company cards with full job descriptions, funnel, skips, and raw JSON — everything the live review needs to see.</p>
+      </div>
+      <div class="panel" id="results">
+        <div class="empty" id="results-empty">No run yet. Start with Preview run.</div>
+        <div id="results-body" hidden></div>
+      </div>
+    </section>
+
+    <div class="decl">
+      <strong>Declarations:</strong>
+      de-dupe on <code>custom_fields.job_id</code> · drop-gate on domain + company_name ·
+      state <code>backfill_done</code> (app) · granularity company · refresh evergreen
+    </div>
+    <p class="footer-note">Hiring Signal sourcing module · audition demo</p>
+  </div>
+
+  <script>
+    const SOP_SAMPLE = {
+      default_inputs: {
+        sourcing_config_id: "2asifsouahfaiusf-fsafnaa-asfasf",
+        client_id: "ad19f786-d43b-4e4d-ad8a-2fb7e8929824",
+        icp_config: {
+          market: {
+            id: "926d1430-ef32-46e8-8b3b-4a234a79d824",
+            name: "PE Portfolio Companies",
+            market: "Private Equity, Venture Capital and Private Equity Principals",
+            market_tag: ""
+          },
+          segment: {
+            id: "1b5b7e88-1dc3-48f1-a534-75df62b8481f",
+            icp_config_id: "926d1430-ef32-46e8-8b3b-4a234a79d824",
+            company_sizes: ["51-200", "201-500", "501-1000", "1001-5000", "5001-10,000"],
+            geos: ["United States"],
+            fixed_signals: ["hiring for Anesthesia and CRNA"],
+            custom_signals: [],
+            free_text_qualifier: "Look for healthcare providers which have got open roles for Anesthesia and CRNA"
+          },
+          persona: {
+            id: "05138d40-4888-4aa2-add7-82b4fe6aab5e",
+            icp_config_id: "926d1430-ef32-46e8-8b3b-4a234a79d824",
+            segment_id: "1b5b7e88-1dc3-48f1-a534-75df62b8481f",
+            seniority: {
+              CXO: "include",
+              Director: "include",
+              "Vice President": "include",
+              "Owner / Partner": "include",
+              "Experienced Manager": "include"
+            },
+            job_titles: [
+              "Operating Partner, VP of Portfolio Operations, Director of Portfolio Operations, Head of Human Capital, VP Human Capital, Director of Human Capital, VP of People, Head of People Operations, Value Creation Partner, Director of Value Creation, Portfolio Operations Manager, HR Operating Partner, Managing Director, Principal, Partner, Founder, CEO"
+            ]
+          }
+        }
+      },
+      module_inputs: {}
+    };
+
+    const HEALTHCARE = JSON.parse(JSON.stringify(SOP_SAMPLE));
+    HEALTHCARE.default_inputs.icp_config.market = {
+      id: "926d1430-ef32-46e8-8b3b-4a234a79d824",
+      name: "Healthcare Providers",
+      market: "Healthcare providers hiring clinical roles",
+      market_tag: "healthcare"
+    };
+
+    const $ = (id) => document.getElementById(id);
+    const payloadEl = $("payload");
+    const confRange = $("min_confidence");
+    const confLabel = $("conf_label");
+    const dryRunEl = $("dry_run");
+    const queriesEl = $("queries");
+    let lastPayload = null;
+    let running = false;
+
+    function loadPreset(name) {
+      const data = name === "sop" ? SOP_SAMPLE : HEALTHCARE;
+      payloadEl.value = JSON.stringify(data, null, 2);
+      document.querySelectorAll(".chip").forEach((c) => {
+        c.classList.toggle("active", c.dataset.preset === name);
+      });
+    }
+
+    confRange.addEventListener("input", () => {
+      confLabel.textContent = confRange.value;
+    });
+
+    document.querySelectorAll(".chip").forEach((chip) => {
+      chip.addEventListener("click", () => loadPreset(chip.dataset.preset));
+    });
+
+    async function checkHealth() {
+      const el = $("health");
+      const storeEl = $("store");
+      try {
+        const res = await fetch("/health");
+        const data = await res.json();
+        const ok = res.ok && data.status === "ok";
+        el.classList.toggle("ok", ok);
+        el.classList.toggle("bad", !ok);
+        el.querySelector(".label").textContent = ok ? "GET /health · ok" : "GET /health · fail";
+
+        const store = data.store || {};
+        const backend = store.backend || "unknown";
+        storeEl.classList.toggle("ok", store.ok !== false && backend !== "unknown");
+        storeEl.classList.toggle("bad", store.ok === false);
+        if (backend === "local") {
+          storeEl.querySelector(".label").textContent = "Store · local JSON";
+          storeEl.title = store.reason || "Local fallback (Supabase table missing)";
+        } else if (backend === "supabase") {
+          storeEl.querySelector(".label").textContent = "Store · Supabase";
+          storeEl.title = "Writing to sourcing_companies";
+        } else {
+          storeEl.querySelector(".label").textContent = "Store · " + backend;
+          storeEl.title = store.reason || "";
+        }
+      } catch (e) {
+        el.classList.add("bad");
+        el.classList.remove("ok");
+        el.querySelector(".label").textContent = "GET /health · unreachable";
+        storeEl.classList.add("bad");
+        storeEl.querySelector(".label").textContent = "Store · unknown";
+      }
+    }
+
+    function friendlySkipReason(reason) {
+      const r = String(reason || "");
+      if (r.includes("PGRST205") || r.includes("Could not find the table")) {
+        return "sourcing_companies table missing in Supabase (run sql/create_table.sql). Server will fall back to local store on next attempt.";
+      }
+      return r;
+    }
+
+    function statusBadgeClass(status) {
+      if (status === "success") return "ok";
+      if (status === "partial") return "partial";
+      if (status === "insert_error" || status === "source_error" || status === "error") return "err";
+      return "mode";
+    }
+
+    function mergeModuleInputs(base, dryRunForce) {
+      const mod = { ...(base.module_inputs || {}) };
+      mod.min_confidence = Number(confRange.value);
+      mod.dry_run = dryRunForce !== undefined ? dryRunForce : dryRunEl.checked;
+      const q = queriesEl.value.trim();
+      if (q) {
+        mod.search_queries = q.split(",").map((s) => s.trim()).filter(Boolean);
+      } else {
+        delete mod.search_queries;
+      }
+      return { ...base, module_inputs: mod };
+    }
+
+    function buildPayload(dryRunForce) {
+      let base;
+      try {
+        base = JSON.parse(payloadEl.value);
+      } catch (e) {
+        throw new Error("Payload JSON is invalid: " + e.message);
+      }
+      if (!base.default_inputs) {
+        throw new Error("Payload must include default_inputs");
+      }
+      return mergeModuleInputs(base, dryRunForce);
+    }
+
+    function setBusy(busy) {
+      running = busy;
+      ["btn-preview", "btn-live", "btn-rerun"].forEach((id) => {
+        const b = $(id);
+        if (id === "btn-rerun") {
+          b.disabled = busy || !lastPayload;
+        } else {
+          b.disabled = busy;
+        }
+        b.classList.toggle("loading", busy && (id === "btn-preview" || id === "btn-live"));
+      });
+    }
+
+    function esc(s) {
+      return String(s ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;");
+    }
+
+    function outcomeLabel(o) {
+      if (o === "would_insert") return "Would insert";
+      if (o === "inserted") return "Inserted";
+      if (o === "duplicate") return "Duplicate";
+      return o || "Lead";
+    }
+
+    function renderCompanyCard(item, i) {
+      const outcome = item.outcome || "inserted";
+      const row = item.row || item;
+      const cf = row.custom_fields || {};
+      const conf = cf.qualification_confidence;
+      const confPct = conf != null ? Math.max(0, Math.min(100, Number(conf))) : null;
+      return `
+        <details class="company" style="animation-delay:${i * 0.05}s" ${i === 0 ? "open" : ""}>
+          <summary>
+            <span class="outcome-pill ${esc(outcome)}">${esc(outcomeLabel(outcome))}</span>
+            <div>
+              <div class="name">${esc(row.company_name)}</div>
+              <div class="meta">
+                <code>${esc(row.standardised_domain)}</code>
+                ${row.company_linkedin_tag ? `<span>li/${esc(row.company_linkedin_tag)}</span>` : ""}
+                ${row.geography ? `<span>${esc(row.geography)}</span>` : ""}
+                ${row.company_size ? `<span>${esc(row.company_size)}</span>` : ""}
+                ${cf.job_title ? `<span>${esc(cf.job_title)}</span>` : ""}
+              </div>
+            </div>
+            <div class="conf-wrap">
+              <div class="conf">${confPct != null ? esc(confPct) + "%" : "—"}</div>
+              <div class="conf-label">confidence</div>
+              ${confPct != null ? `<div class="conf-bar"><i style="width:${confPct}%"></i></div>` : ""}
+            </div>
+          </summary>
+          <div class="body">
+            ${cf.qualification_reason ? `<p class="reason">${esc(cf.qualification_reason)}</p>` : ""}
+            ${cf.job_url ? `<p class="reason"><a href="${esc(cf.job_url)}" target="_blank" rel="noopener">Open job posting ↗</a></p>` : ""}
+            <div class="jd-label">Full job description</div>
+            ${cf.job_description
+              ? `<div class="jd">${esc(cf.job_description)}</div>`
+              : `<p class="reason">No job description stored.</p>`}
+          </div>
+        </details>`;
+    }
+
+    function renderResults(data, httpStatus) {
+      $("results-empty").hidden = true;
+      const body = $("results-body");
+      body.hidden = false;
+      $("results-section").scrollIntoView({ behavior: "smooth", block: "start" });
+
+      if (!data || data.error) {
+        body.innerHTML = `<div class="error-box">${esc(data?.error || "Unknown error")}</div>`;
+        return;
+      }
+
+      const s = data.summary || {};
+      const companies = Array.isArray(data.companies) && data.companies.length
+        ? data.companies
+        : (data.would_insert || []).map((row) => ({ outcome: "would_insert", row }))
+          .concat((data.inserted_rows || []).map((row) => ({ outcome: "inserted", row })))
+          .concat((data.duplicate_rows || []).map((row) => ({ outcome: "duplicate", row })));
+
+      const badges = [];
+      const st = data.status || "—";
+      badges.push(`<span class="badge ${statusBadgeClass(st)}">${esc(st)}</span>`);
+      if (data.mode) badges.push(`<span class="badge mode">${esc(data.mode)}</span>`);
+      if (data.dry_run) badges.push(`<span class="badge dry">dry run</span>`);
+      if (data.store) badges.push(`<span class="badge mode">store · ${esc(data.store)}</span>`);
+      badges.push(`<span class="badge">HTTP ${httpStatus}</span>`);
+
+      let banner = "";
+      if (data.store === "local") {
+        banner = `<div class="banner">Writing to <strong>local JSON store</strong> (Supabase <code>sourcing_companies</code> not found). De-dupe / Re-run still work for the demo. Run <code>sql/create_table.sql</code> to use Supabase.</div>`;
+      } else if (st === "insert_error") {
+        banner = `<div class="banner err">Insert stage failed for every row. Check Skipped for details.</div>`;
+      } else if (st === "partial") {
+        banner = `<div class="banner warn">Run completed with some failures or skips.</div>`;
+      }
+
+      const insertedN = s.inserted ?? data.inserted ?? 0;
+      const dupN = s.duplicates_skipped || 0;
+      const candN = s.candidates || 0;
+
+      const hero = `
+        <div class="hero-stat">
+          <div class="hs">
+            <div class="big">${esc(insertedN)}</div>
+            <div class="sub">${data.dry_run ? "Would insert" : "Inserted"}</div>
+          </div>
+          <div class="hs alt">
+            <div class="big">${esc(dupN)}</div>
+            <div class="sub">Duplicates skipped</div>
+          </div>
+          <div class="hs alt">
+            <div class="big">${esc(candN)}</div>
+            <div class="sub">Candidates seen</div>
+          </div>
+          <div class="hs alt">
+            <div class="big">${esc(companies.length)}</div>
+            <div class="sub">Leads in view</div>
+          </div>
+        </div>`;
+
+      const queries = (data.queries || []).map((q) => `<span>${esc(q)}</span>`).join("");
+      const queryBlock = queries
+        ? `<div class="query-chips" title="Queries sent to SerpAPI">${queries}</div>`
+        : "";
+
+      let dedupeNote = "";
+      if (dupN > 0 && insertedN === 0) {
+        dedupeNote = `<div class="dedupe-callout"><strong>De-dupe working.</strong> Every qualified lead was already in the store for this <code>sourcing_config_id</code> + <code>job_id</code>. Expand the company cards below to still show the full job description.</div>`;
+      } else if (dupN > 0) {
+        dedupeNote = `<div class="dedupe-callout"><strong>Idempotent re-run.</strong> ${esc(dupN)} duplicate(s) silently skipped; ${esc(insertedN)} new row(s) written.</div>`;
+      }
+
+      const counters = [
+        ["candidates", s.candidates],
+        ["inserted", insertedN],
+        ["unqualified", s.unqualified],
+        ["low conf", s.low_confidence],
+        ["drop-gated", s.drop_gated],
+        ["duplicates", dupN],
+        ["qual fail", s.qualification_failures],
+        ["insert fail", s.insert_failures],
+      ];
+
+      const maxFunnel = Math.max(candN, 1);
+      const funnelStages = [
+        ["Fetched", candN],
+        ["Qualified", Math.max(0, candN - (s.unqualified || 0) - (s.qualification_failures || 0))],
+        ["Past confidence", Math.max(0, candN - (s.unqualified || 0) - (s.qualification_failures || 0) - (s.low_confidence || 0))],
+        ["Past drop-gate", (insertedN + dupN)],
+        [data.dry_run ? "Would insert" : "Inserted", insertedN],
+      ];
+
+      const companiesHtml = companies.length
+        ? companies.map((c, i) => renderCompanyCard(c, i)).join("")
+        : `<p class="empty" style="padding:1.5rem 0">No company rows to display for this run. Check the Funnel and Skipped tabs.</p>`;
+
+      const skipped = s.skipped || [];
+      const skippedHtml = skipped.length
+        ? skipped.map((sk) => `
+          <div class="skip-row">
+            <span class="stage">${esc(sk.stage)}</span>
+            <div>
+              ${sk.company_name ? `<span class="cname">${esc(sk.company_name)}</span>` : ""}
+              ${sk.job_title ? `<span class="cname" style="font-weight:500;opacity:0.75">${esc(sk.job_title)}</span>` : ""}
+              <span class="reason">${esc(friendlySkipReason(sk.reason))}</span>
+            </div>
+          </div>`).join("")
+        : `<p class="empty" style="padding:1rem 0">Nothing skipped.</p>`;
+
+      const raw = esc(JSON.stringify(data, null, 2));
+
+      body.innerHTML = `
+        <div class="badges">${badges.join("")}</div>
+        ${banner}
+        ${hero}
+        ${queryBlock}
+        ${dedupeNote}
+        <div class="counters">
+          ${counters.map(([k, v], i) => `
+            <div class="counter" style="animation-delay:${i * 0.04}s">
+              <div class="n">${v == null ? "—" : esc(v)}</div>
+              <div class="k">${esc(k)}</div>
+            </div>`).join("")}
+        </div>
+
+        <div class="tabs" role="tablist">
+          <button type="button" class="tab active" data-tab="companies">Companies (${companies.length})</button>
+          <button type="button" class="tab" data-tab="funnel">Funnel</button>
+          <button type="button" class="tab" data-tab="skipped">Skipped (${skipped.length})</button>
+          <button type="button" class="tab" data-tab="raw">Raw JSON</button>
+        </div>
+
+        <div class="tab-panel" data-panel="companies">${companiesHtml}</div>
+        <div class="tab-panel" data-panel="funnel" hidden>
+          <div class="funnel">
+            ${funnelStages.map(([label, n]) => `
+              <div class="funnel-row">
+                <span class="label">${esc(label)}</span>
+                <div class="track"><i style="width:${Math.round((n / maxFunnel) * 100)}%"></i></div>
+                <span class="n">${esc(n)}</span>
+              </div>`).join("")}
+          </div>
+        </div>
+        <div class="tab-panel skipped" data-panel="skipped" hidden>${skippedHtml}</div>
+        <div class="tab-panel" data-panel="raw" hidden>
+          <textarea class="raw-json" readonly>${raw}</textarea>
+        </div>
+      `;
+
+      body.querySelectorAll(".tab").forEach((tab) => {
+        tab.addEventListener("click", () => {
+          body.querySelectorAll(".tab").forEach((t) => t.classList.toggle("active", t === tab));
+          body.querySelectorAll(".tab-panel").forEach((p) => {
+            p.hidden = p.dataset.panel !== tab.dataset.tab;
+          });
+        });
+      });
+    }
+
+    async function run(mode) {
+      if (running) return;
+      let payload;
+      try {
+        const dryForce = mode === "preview" ? true : mode === "live" ? false : undefined;
+        if (mode === "rerun") {
+          if (!lastPayload) return;
+          payload = lastPayload;
+        } else {
+          payload = buildPayload(dryForce);
+          dryRunEl.checked = !!payload.module_inputs.dry_run;
+        }
+      } catch (e) {
+        renderResults({ error: e.message }, 0);
+        return;
+      }
+
+      setBusy(true);
+      $("results-empty").hidden = true;
+      $("results-body").hidden = false;
+      $("results-body").innerHTML = `
+        <div class="loading-stage">
+          <div class="ls on"><span class="pip"></span> SerpAPI — Google Jobs</div>
+          <div class="ls on"><span class="pip"></span> Jina — full job description</div>
+          <div class="ls on"><span class="pip"></span> OpenRouter — ICP qualify</div>
+          <div class="ls on"><span class="pip"></span> Domain resolve · drop-gate · insert</div>
+        </div>
+        <p class="empty" style="padding-top:0.5rem">Running pipeline… usually 30–90s.</p>`;
+      $("results-section").scrollIntoView({ behavior: "smooth", block: "start" });
+
+      try {
+        const res = await fetch("/run", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+        let data;
+        try {
+          data = await res.json();
+        } catch {
+          data = { error: `Non-JSON response (${res.status})` };
+        }
+        if (!res.ok && !data.status) {
+          data = { error: data.detail ? JSON.stringify(data.detail) : JSON.stringify(data), status: "error" };
+        }
+        lastPayload = payload;
+        $("btn-rerun").disabled = false;
+        renderResults(data, res.status);
+        checkHealth();
+      } catch (e) {
+        renderResults({ error: String(e.message || e) }, 0);
+      } finally {
+        setBusy(false);
+      }
+    }
+
+    $("btn-preview").addEventListener("click", () => run("preview"));
+    $("btn-live").addEventListener("click", () => run("live"));
+    $("btn-rerun").addEventListener("click", () => run("rerun"));
+
+    loadPreset("healthcare");
+    checkHealth();
+    setInterval(checkHealth, 45000);
+  </script>
+</body>
+</html>
